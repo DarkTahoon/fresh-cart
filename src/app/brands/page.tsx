@@ -1,9 +1,9 @@
-import React from 'react'
+import AllBrands from "../_components/AllBrands/AllBrands";
 
-export default function brands() {
+export default function BrandsPage() {
   return (
-    <div className='h-screen flex justify-center items-center pt-20'>
-      <h1>brands</h1>
-    </div>
-  )
+    <main>
+      <AllBrands />
+    </main>
+  );
 }

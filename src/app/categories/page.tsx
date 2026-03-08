@@ -1,9 +1,9 @@
-import React from 'react'
+import AllCategories from "@/app/_components/AllCategories/AllCategories"; // Adjust path if needed
 
-export default function categories() {
+export default function CategoriesPage() {
   return (
-    <div className='h-screen flex justify-center items-center pt-20'>
-      <h1>Categories</h1>
-    </div>
-  )
+    <main>
+      <AllCategories />
+    </main>
+  );
 }

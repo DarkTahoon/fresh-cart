@@ -11,17 +11,12 @@ import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-
-
-
 export default function Cart() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<CarProductType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [removeDisabled, setremoveDisabled] = useState(false);
-  const [updateDisabled, setupdateDisabled] = useState(false);
   const [currentID, setcurrentID] = useState("");
-  const [updateLoading, setupdateLoading] = useState(false);
-  const { numOfCartProd , setNumOfCartProd } = useContext(CartContext);
+  const [isProcessing, setIsProcessing] = useState(false); // Combined disabled state
+  const { numOfCartProd, setNumOfCartProd } = useContext(CartContext);
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartId, setCartId] = useState("");
 
@@ -36,217 +31,217 @@ export default function Cart() {
       setLoading(false);
     } catch (err) {
       console.log(err);
-      
       setLoading(false);
     }
   }
 
   async function deleteProduct(id: string) {
-    setremoveDisabled(true);
+    setcurrentID(id);
+    setIsProcessing(true);
     const res = await removeCartItem(id);
     if (res.status === "success") {
       setProducts(res.data.products);
-      toast.success("Product removed from cart successfully", {
-        duration: 3000,
-      });
-      let sum =0;
-      setremoveDisabled(false);
+      toast.success("Product removed from cart successfully", { duration: 3000 });
+      let sum = 0;
       res.data.products.forEach((product: CarProductType) => {
         sum += product.count;
       });
       setNumOfCartProd(sum);
-      getuserCart();
+      setTotalPrice(res.data.totalCartPrice); // Update price without needing a full refetch
     } else {
-      toast.error("Failed to remove product from cart", { duration: 3000 });
-      setremoveDisabled(false);
+      toast.error("Failed to remove product", { duration: 3000 });
     }
+    setIsProcessing(false);
+    setcurrentID("");
   }
 
   async function updateProductCount(id: string, count: string, sign: string) {
     setcurrentID(id);
-    setupdateLoading(true);
-    setupdateDisabled(true);
+    setIsProcessing(true);
     const res = await UpdateCart(id, count);
     if (res.status === "success") {
       setProducts(res.data.products);
-      toast.success("Product quantity updated successfully", {
-        duration: 3000,
-      });
+      setTotalPrice(res.data.totalCartPrice);
+      
       if (sign === "+") {
         setNumOfCartProd(numOfCartProd + 1);
       } else if (sign === "-") {
         setNumOfCartProd(numOfCartProd - 1);
       }
-      setupdateDisabled(false);
-      setupdateLoading(false);
-      getuserCart();
     } else {
-      toast.error("Failed to update product quantity", { duration: 3000 });
-      setupdateDisabled(false);
-      setupdateLoading(false);
+      toast.error("Failed to update quantity", { duration: 3000 });
     }
-    
+    setIsProcessing(false);
+    setcurrentID("");
   }
 
   async function clearUserCart() {
+    setIsProcessing(true);
     const res = await clearCart();
     if (res.message === "success") {
       setProducts([]);
-      toast.success("Cart cleared successfully", {
-        duration: 3000,
-      });
+      toast.success("Cart cleared successfully", { duration: 3000 });
       setNumOfCartProd(0);
+      setTotalPrice(0);
     } else {
       toast.error("Failed to clear cart", { duration: 3000 });
     }
+    setIsProcessing(false);
   }
 
   useEffect(() => {
     getuserCart();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
     return (
-      <>
-        <div className="h-screen flex justify-center items-center mt-30">
-          <div className="loader"></div>
-        </div>
-      </>
+      <div className="min-h-[60vh] flex justify-center items-center">
+        <div className="loader"></div> {/* Assuming you have CSS for this loader */}
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="container mx-auto max-w-5xl px-4 md:px-0 py-12 pt-24">
+      <div className="mb-8 pb-4 border-b border-slate-100 flex justify-between items-end">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Your Cart</h2>
+          <span className="block w-16 h-1 bg-purple-600 mt-3 rounded-full"></span>
+        </div>
+        <span className="text-slate-500 font-medium">{numOfCartProd} Items</span>
+      </div>
+
       {products.length > 0 ? (
-        <div className="w-2/3 mx-auto my-12 bg-purple-300 p-6 rounded-lg flex flex-col gap-6 shadow-2xl mt-30">
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-16 py-3">
-                    IMAGE
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    PRODUCT
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    QTY
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    PRICE
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    ACTION
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product : CarProductType) => (
-                  <tr
-                    key={product._id}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* LEFT SIDE: Cart Items List */}
+          <div className="w-full lg:w-2/3 flex flex-col gap-4">
+            {products.map((product: CarProductType) => (
+              <div 
+                key={product._id} 
+                className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row items-center gap-6 hover:shadow-md transition-shadow duration-200"
+              >
+                {/* Product Image */}
+                <div className="w-full sm:w-24 h-24 relative rounded-xl bg-slate-50 overflow-hidden flex-shrink-0">
+                  <Image
+                    src={product.product.imageCover}
+                    alt={product.product.title}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
+
+                {/* Product Info */}
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-lg font-bold text-slate-800 line-clamp-1">{product.product.title}</h3>
+                  <p className="text-purple-600 font-black mt-1">{product.price} EGP</p>
+                </div>
+
+                {/* Quantity Controls */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border-2 border-slate-100 bg-slate-50 rounded-lg p-1">
+                    <button
+                      disabled={isProcessing || product.count <= 1}
+                      onClick={() => updateProductCount(product.product.id, `${product.count - 1}`, "-")}
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-slate-500 hover:bg-white hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      <i className="fas fa-minus text-xs"></i>
+                    </button>
+                    
+                    <div className="w-10 text-center font-bold text-slate-800">
+                      {isProcessing && currentID === product.product.id ? (
+                        <i className="fas fa-spin fa-spinner text-purple-600"></i>
+                      ) : (
+                        product.count
+                      )}
+                    </div>
+
+                    <button
+                      disabled={isProcessing}
+                      onClick={() => updateProductCount(product.product.id, `${product.count + 1}`, "+")}
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-slate-500 hover:bg-white hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      <i className="fas fa-plus text-xs"></i>
+                    </button>
+                  </div>
+
+                  {/* Remove Button */}
+                  <button
+                    disabled={isProcessing}
+                    onClick={() => deleteProduct(product.product.id)}
+                    className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <td className="p-4">
-                      <Image
-                        width={100}
-                        height={100}
-                        src={product.product.imageCover}
-                        className="rounded-2xl w-16 md:w-32 max-w-full max-h-full shadow-lg"
-                        alt={product.product.title}
-                      />
-                    </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {product.product.title}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center border-2 border-purple-300 max-w-max rounded-lg px-2 py-1">
-                        <button
-                          disabled= {updateDisabled}
-                          onClick={() => updateProductCount(product.product.id, `${product.count - 1}`, "-")}
-                          className="disabled:opacity-80 disabled:bg-gray-300 disabled:cursor-not-allowed inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                          type="button"
-                        >
-                          <span className="sr-only">Quantity button</span>
-                          <svg
-                            className="w-3 h-3"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 18 2"
-                          >
-                            <path
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M1 1h16"
-                            />
-                          </svg>
-                        </button>
-                        <div>
-                          { product.product.id === currentID ? updateLoading ? <i className="fas fa-spin fa-spinner"></i> : <span>{product.count}</span> :<span>{product.count}</span>}
-                          {}
-                        </div>
-                        <button
-                          disabled= {updateDisabled}
-                          onClick={() => updateProductCount(product.product.id, `${product.count + 1}`, "+")}
-                          className="disabled:opacity-80 disabled:bg-gray-300 disabled:cursor-not-allowed inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                          type="button"
-                        >
-                          <span className="sr-only">Quantity button</span>
-                          <svg
-                            className="w-3 h-3"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 18 18"
-                          >
-                            <path
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 1v16M1 9h16"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                      {product.price * product.count} EGP
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        disabled={removeDisabled}
-                        onClick={() => deleteProduct(product.product.id)}
-                        className="disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-red-700 flex items-center font-bold dark:text-red-500 bg-red-600 text-white cursor-pointer border-2 border-red-500 px-6 py-3 rounded-4xl hover:bg-red-700 hover:border-red-700"
-                      >
-                        Remove{" "}
-                        <i className="fas fa-trash mb-[-5px] text-white"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    {isProcessing && currentID === product.product.id ? (
+                      <i className="fas fa-spin fa-spinner"></i>
+                    ) : (
+                      <i className="fas fa-trash"></i>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+            {/* Clear Cart Button */}
+            <div className="flex justify-start mt-4">
+              <button 
+                onClick={clearUserCart}
+                disabled={isProcessing}
+                className="text-red-500 font-bold text-sm hover:underline disabled:opacity-50 flex items-center gap-2"
+              >
+                <i className="fas fa-trash-alt"></i> Clear Entire Cart
+              </button>
+            </div>
           </div>
-          <h1 className="text-white text-2xl text-center p-9 font-bold bg-purple-600 rounded-lg shadow-md">
-            Total Price: {totalPrice} EGP
-          </h1>
-          <div className="flex justify-center space-x-4 mt-4">
-               <Button className="bg-red-600 text-white hover:bg-red-700 w-1/2 cursor-pointer" onClick={() => clearUserCart()}>Clear Cart{" "} <i className="fas fa-trash mb-[-3px]"></i></Button>
-               <Link className="w-1/2" href={`/checkout/${cartId}`}>
-               <Button className="bg-indigo-500 text-white hover:bg-indigo-700 w-full cursor-pointer">check out{" "} <i className="fa-solid fa-bag-shopping mb-[-3px]" style={{color: "#ffffff"}}></i></Button>
-               </Link>
+
+          {/* RIGHT SIDE: Order Summary Card */}
+          <div className="w-full lg:w-1/3">
+            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 sticky top-24">
+              <h3 className="text-xl font-bold text-slate-800 mb-6">Order Summary</h3>
+              
+              <div className="flex justify-between items-center mb-4 text-slate-600">
+                <span>Subtotal ({numOfCartProd} items)</span>
+                <span className="font-semibold">{totalPrice} EGP</span>
+              </div>
+              
+              <div className="flex justify-between items-center mb-6 text-slate-600">
+                <span>Shipping</span>
+                <span className="text-green-600 font-bold flex items-center gap-1">
+                  <i className="fas fa-check-circle"></i> Free
+                </span>
+              </div>
+              
+              <hr className="border-slate-200 mb-6" />
+              
+              <div className="flex justify-between items-end mb-8">
+                <span className="text-lg font-bold text-slate-800">Total</span>
+                <span className="text-3xl font-black text-purple-700">{totalPrice} <span className="text-lg">EGP</span></span>
+              </div>
+
+              <Link href={`/checkout/${cartId}`} className="block w-full">
+                <Button className="w-full h-14 text-lg font-bold bg-purple-600 text-white rounded-xl shadow-md hover:bg-purple-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex justify-center items-center gap-2">
+                  Proceed to Checkout <i className="fas fa-arrow-right"></i>
+                </Button>
+              </Link>
+            </div>
           </div>
+
         </div>
       ) : (
-        <div className="bg-purple-500 rounded-2xl shadow-2xl w-2/3 mx-auto my-12 mt-30">
-          <h1 className="text-white text-2xl text-center p-9 font-bold">
-            Your cart is empty
-          </h1>
+        /* Empty Cart State */
+        <div className="flex flex-col items-center justify-center py-20 px-4 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+          <div className="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+            <i className="fas fa-shopping-cart text-4xl text-purple-600"></i>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">Your cart is completely empty</h2>
+          <p className="text-slate-500 mb-8 text-center max-w-md">Looks like you haven&apos;t added anything to your cart yet. Let&apos;s get some items in there!</p>
+          <Link href="/">
+            <Button className="h-12 px-8 text-base font-bold bg-purple-600 text-white rounded-full shadow-md hover:bg-purple-700 hover:shadow-lg transition-all">
+              Start Shopping
+            </Button>
+          </Link>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -151,4 +151,19 @@
 @keyframes mvY {
     100% { top : 0.5px }
 }
-      
+
+
+/* globals.css */
+body {
+  /* Replace the URL with your actual image path */
+  background-image: url('../../public/images/Gemini_Generated_Image_cn1wqycn1wqycn1w.png'); 
+  background-attachment: fixed; /* This pins the wallpaper */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* globals.css */
+html {
+  scroll-behavior: smooth;
+}
