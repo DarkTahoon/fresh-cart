@@ -241,7 +241,7 @@ export default function Cart() {
           </div>
         </div>
       ) : (
-        <div className="bg-purple-500 rounded-2xl shadow-2xl w-2/3 mx-auto my-12">
+        <div className="bg-purple-500 rounded-2xl shadow-2xl w-2/3 mx-auto my-12 mt-30">
           <h1 className="text-white text-2xl text-center p-9 font-bold">
             Your cart is empty
           </h1>

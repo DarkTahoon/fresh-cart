@@ -4,7 +4,6 @@ import getMyToken from "@/utilities/getMyToken";
 
 export default async function onlinePayment(
   cartId: string,
-  url = process.env.NEXTAUTH_URL ,
   formValues: checkoutSchemaType
 ) {
   const token = await getMyToken();
@@ -12,7 +11,7 @@ export default async function onlinePayment(
     throw new Error("User is not authenticated");
   }
   const res = await fetch(
-    `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=${url}`,
+    `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=${process.env.NEXT_PUBLIC_BASE_URL}`,
     {
       method: "POST",
       headers: {

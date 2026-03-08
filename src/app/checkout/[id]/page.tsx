@@ -32,7 +32,7 @@ export default function Checkout() {
 
   async function handleCheckout(values : checkoutSchemaType) {
     console.log(values);
-    const res = await onlinePayment(id,"",values);
+    const res = await onlinePayment(id,values);
     console.log(res);
     
     if(res.status === "success"){
