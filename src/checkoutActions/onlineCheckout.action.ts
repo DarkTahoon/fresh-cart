@@ -11,7 +11,7 @@ export default async function onlinePayment(
     throw new Error("User is not authenticated");
   }
   const res = await fetch(
-    `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=${process.env.NEXT_PUBLIC_BASE_URL}`,
+    `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=${process.env.NEXT_URL}`,
     {
       method: "POST",
       headers: {
