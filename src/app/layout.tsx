@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FreshCart | Omar Mohamed", // Updated for your brand
+  title: "FreshCart", // Updated for your brand
   description: "Premium E-commerce experience",
 };
 
