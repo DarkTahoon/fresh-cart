@@ -48,7 +48,7 @@ export default function Navbar() {
             
             {/* WISHLIST ICON WITH BADGE */}
             <Link
-              href="/wish"
+              href="/wishlist"
               className="relative p-2.5 bg-white/10 rounded-xl border border-white/10 hover:bg-white/20 transition-all group"
             >
               <Heart className="w-6 h-6 text-white transition-transform group-hover:scale-110 group-active:scale-90" />
@@ -109,7 +109,7 @@ export default function Navbar() {
             <ul className="flex flex-col gap-5">
               <li><Link onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-white" href="/">Home</Link></li>
               <li><Link onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-white" href="/products">Products</Link></li>
-              <li><Link onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-purple-200 flex justify-between" href="/wish">Wishlist <span>{wishlistIds.length}</span></Link></li>
+              <li><Link onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-purple-200 flex justify-between" href="/wishlist">Wishlist <span>{wishlistIds.length}</span></Link></li>
               <li><Link onClick={() => setIsMenuOpen(false)} className="text-lg font-bold text-white" href="/allorders">Orders</Link></li>
               <hr className="border-white/10" />
               {status === "unauthenticated" ? (

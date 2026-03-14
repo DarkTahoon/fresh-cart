@@ -48,9 +48,9 @@ export default function Footer() {
           <div className="space-y-6">
             <h4 className="text-slate-900 font-black text-xs uppercase tracking-[0.2em]">Navigation</h4>
             <ul className="space-y-4">
-              {["Home", "All Products", "Categories", "Wishlist", "Cart"].map((item) => (
+              {["Products", "Categories", "Wishlist", "Cart","AllOrders"].map((item) => (
                 <li key={item}>
-                  <Link href={`/${item.toLowerCase().replace(" ", "-")}`} className="text-slate-500 font-bold text-sm hover:text-purple-600 transition-colors">
+                  <Link href={`/${item.toLowerCase()}`} className="text-slate-500 font-bold text-sm hover:text-purple-600 transition-colors">
                     {item}
                   </Link>
                 </li>
@@ -95,7 +95,7 @@ export default function Footer() {
         {/* BOTTOM COPYRIGHT */}
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-200/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-            © 2026 FreshCart — Designed by <span className="text-purple-600 underline">Omar</span>
+            © 2026 FreshCart — Designed by <span className="text-purple-600 underline">Omar_Sameh_Tahoun</span>
           </p>
           <div className="flex gap-6">
             <span className="text-slate-400 font-bold text-[10px] uppercase tracking-tighter">Privacy Policy</span>

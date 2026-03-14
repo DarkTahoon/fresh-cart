@@ -110,10 +110,10 @@ export default function WishlistPage() {
           {products.map((product) => (
             <div 
               key={product._id} 
-              className="group bg-white border-2 border-slate-100 rounded-[32px] p-6 flex flex-col md:flex-row items-center gap-8 shadow-[12px_12px_0px_0px_rgba(147,51,234,0.05)] transition-all hover:shadow-[16px_16px_0px_0px_rgba(147,51,234,0.1)] hover:-translate-y-1"
+              className="group bg-white border-2 border-slate-100 rounded-4x p-6 flex flex-col md:flex-row items-center gap-8 shadow-[12px_12px_0px_0px_rgba(147,51,234,0.05)] transition-all hover:shadow-[16px_16px_0px_0px_rgba(147,51,234,0.1)] hover:-translate-y-1"
             >
               {/* Product Image */}
-              <div className="w-40 h-40 flex-shrink-0 bg-slate-50 rounded-2xl overflow-hidden p-4 relative">
+              <div className="w-40 h-40 shrink-0 bg-slate-50 rounded-2xl overflow-hidden p-4 relative">
                 <img 
                   src={product.imageCover} 
                   alt={product.title} 
@@ -122,7 +122,7 @@ export default function WishlistPage() {
               </div>
 
               {/* Product Info */}
-              <div className="flex-grow text-center md:text-left">
+              <div className="grow text-center md:text-left">
                 <span className="text-purple-600 font-black text-[10px] uppercase tracking-widest bg-purple-50 px-2 py-1 rounded-md">
                   {product.category.name}
                 </span>
@@ -142,7 +142,7 @@ export default function WishlistPage() {
                 <Button 
                   onClick={() => handleMoveToCart(product._id)}
                   disabled={movingToCartId === product._id}
-                  className="h-14 px-8 bg-purple-600 hover:bg-purple-700 text-white font-black rounded-2xl shadow-[0px_6px_0px_0px_rgba(107,33,168,1)] active:shadow-none active:translate-y-[4px] transition-all flex items-center gap-2 min-w-[180px]"
+                  className="h-14 px-8 bg-purple-600 hover:bg-purple-700 text-white font-black rounded-2xl shadow-[0px_6px_0px_0px_rgba(107,33,168,1)] active:shadow-none active:translate-y-1 transition-all flex items-center gap-2 min-w-45"
                 >
                   {movingToCartId === product._id ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
