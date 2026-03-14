@@ -17,9 +17,11 @@ import { useRouter } from "next/navigation";
 import { loginSchema, loginSchemaType } from "@/schema/login.schema";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { Mail, Lock, Loader2, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+// Added Home to the icon imports
+import { Mail, Lock, Loader2, ArrowRight, ShieldCheck, Zap, Home } from "lucide-react";
 
 export default function Login() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<loginSchemaType>({
@@ -40,7 +42,7 @@ export default function Login() {
     });
 
     if (response?.ok) {
-      toast.success("Welcome back, Omar!", { duration: 3000 }); // Personalizing for you
+      toast.success(`Welcome back!`, { duration: 3000 });
       window.location.href = "/";
     } else {
       setIsLoading(false);
@@ -49,13 +51,13 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#0f111a]">
       
       {/* --- LEFT SIDE: Brand Identity (Solid Purple) --- */}
       <div className="w-full lg:w-2/5 bg-purple-600 p-12 lg:p-20 flex flex-col justify-between relative overflow-hidden">
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-2 mb-16">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg transition-transform hover:scale-110">
               <i className="text-purple-600 fa-solid fa-cart-shopping text-xl"></i>
             </div>
             <span className="text-2xl font-black text-white tracking-tighter uppercase">FreshCart</span>
@@ -85,11 +87,14 @@ export default function Login() {
       </div>
 
       {/* --- RIGHT SIDE: Login Form Area --- */}
-      <div className="w-full lg:w-3/5 bg-white flex items-center justify-center p-8 lg:p-16">
-        <div className="w-full max-w-md">
-          <div className="mb-12">
+      {/* Wrapped in bg-slate-50 to make the white "Floating Card" stand out */}
+      <div className="w-full lg:w-3/5 bg-slate-50 flex items-center justify-center p-8 lg:p-16">
+        
+        {/* THE FLOATING CARD CONTAINER */}
+        <div className="w-full max-w-md bg-white p-10 rounded-[40px] border-2 border-slate-100 shadow-[20px_20px_0px_0px_rgba(0,0,0,0.03)]">
+          <div className="mb-10 text-center lg:text-left">
             <h2 className="text-4xl font-black text-slate-900 tracking-tight">Sign In.</h2>
-            <p className="text-slate-500 font-bold mt-2">Enter your credentials to continue shopping.</p>
+            <p className="text-slate-500 font-bold mt-2">Enter your credentials to continue.</p>
           </div>
 
           <Form {...form}>
@@ -106,7 +111,7 @@ export default function Login() {
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors" />
                       <FormControl>
                         <Input 
-                          placeholder="john@example.com" 
+                          placeholder="omar@example.com" 
                           className="h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 font-bold focus:border-purple-600 transition-all ring-0 shadow-none" 
                           {...field} 
                         />
@@ -143,11 +148,12 @@ export default function Login() {
                 )}
               />
 
-              {/* Solid Submit Button */}
-              <div className="pt-6">
+              {/* Button Row: Sign In (Primary) + Home (Secondary) */}
+              <div className="pt-6 flex gap-4">
+                {/* Submit Button */}
                 <Button 
                   disabled={isLoading}
-                  className="w-full h-16 bg-purple-600 hover:bg-purple-700 text-white font-black text-xl rounded-2xl shadow-[0px_8px_0px_0px_rgba(107,33,168,1)] active:shadow-none active:translate-y-[4px] transition-all flex items-center justify-center gap-3 cursor-pointer"
+                  className="flex-[3] h-16 bg-purple-600 hover:bg-purple-700 text-white font-black text-xl rounded-2xl shadow-[0px_8px_0px_0px_rgba(107,33,168,1)] active:shadow-none active:translate-y-[4px] transition-all flex items-center justify-center gap-3 cursor-pointer"
                 >
                   {isLoading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
@@ -157,6 +163,16 @@ export default function Login() {
                     </>
                   )}
                 </Button>
+
+                {/* Home Button (Matching Design) */}
+                <Link href="/" className="flex-1">
+                  <Button 
+                    type="button"
+                    className="w-full h-16 bg-purple-600 hover:bg-purple-700 text-white font-black text-xl rounded-2xl shadow-[0px_8px_0px_0px_rgba(107,33,168,1)] active:shadow-none active:translate-y-[4px] transition-all flex items-center justify-center cursor-pointer"
+                  >
+                    <Home className="w-7 h-7" />
+                  </Button>
+                </Link>
               </div>
 
               <div className="pt-8 border-t border-slate-100 text-center">

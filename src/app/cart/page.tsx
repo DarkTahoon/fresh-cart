@@ -103,7 +103,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 md:px-0 py-12 pt-24">
+    <div className="container mx-auto max-w-5xl px-4 md:px-0 py-12 pt-24 mt-10">
       <div className="mb-8 pb-4 border-b border-slate-100 flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Your Cart</h2>

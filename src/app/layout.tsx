@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// Update the import to the wrapper
 import NavbarWrapper from "./_components/Navbar/NavbarWrapper"; 
+import Footer from "./_components/Footer/page"; 
 import "../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
 import { Toaster } from "@/components/ui/sonner";
 import MySessionProvider from "@/MySessionProvider/MySessionProvider";
 import CartContextProvider from "@/context/CartContext";
+import WishlistContextProvider from "@/context/WishlistContext"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FreshCart", // Updated for your brand
+  title: "FreshCart",
   description: "Premium E-commerce experience",
 };
 
@@ -31,16 +32,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased 
+        bg-[url('/images/wallpaper.png')] bg-fixed bg-repeat bg-[length:200px_200px] bg-[#fcfaff]
+        min-h-screen flex flex-col`}
       >
         <MySessionProvider>
           <CartContextProvider>
-            <Toaster position="top-right" richColors />
-            
-            {/* The wrapper handles the conditional logic */}
-            <NavbarWrapper />
-            
-            {children}
+            {/* 2. WRAP WITH WISHLIST CONTEXT PROVIDER */}
+            <WishlistContextProvider>
+              <Toaster position="top-right" richColors />
+              
+              <NavbarWrapper />
+              
+              <main className="relative z-10 flex-grow">
+                {children}
+              </main>
+
+              <Footer />
+            </WishlistContextProvider>
           </CartContextProvider>
         </MySessionProvider>
       </body>
